@@ -8,9 +8,9 @@ Gem::Specification.new do |gem|
   gem.version       = Paranoid2::VERSION
   gem.authors       = ["yury"]
   gem.email         = ["yury.korolev@gmail.com"]
-  gem.description   = %q{TODO: Write a gem description}
-  gem.summary       = %q{TODO: Write a gem summary}
-  gem.homepage      = ""
+  gem.description   = %q{paranoid models for rails 4}
+  gem.summary       = %q{paranoid models for rails 4}
+  gem.homepage      = "https://github.com/anjlab/paranoid2"
   gem.license       = "MIT"
 
   gem.files         = `git ls-files`.split($/)
