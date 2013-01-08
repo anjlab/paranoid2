@@ -12,7 +12,7 @@ module Paranoid2
 
     def delete(opts = {})
       with_paranoid(opts) do
-        update_column(:deleted_at, Time.now) if !deleted? && persisted?
+        update_attribute(:deleted_at, Time.now) if !deleted? && persisted?
         if paranoid_force
           self.class.unscoped { super() }
         else
@@ -24,7 +24,7 @@ module Paranoid2
     def restore(opts={})
       return if !destroyed?
 
-      update_column :deleted_at, nil
+      update_attribute :deleted_at, nil
 
       if opts.fetch(:associations) { true }
         restore_associations
