@@ -58,11 +58,13 @@ Client.only_deleted
 
 ### With paperclip
 
+```ruby
 class Listing < ActiveRecord::Base
   has_attached_file :image,
     # ...
     preserve_files: true
 end
+```
 
 ## Contributing
 
