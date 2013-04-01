@@ -216,7 +216,7 @@ describe Paranoid2 do
 
     it 'chains paranoid models' do
       scope = model.where(name: 'foo').only_deleted
-      scope.where_values_hash[:name].must_equal 'foo'
+      scope.where_values_hash['name'].must_equal 'foo'
     end
   end
 end
