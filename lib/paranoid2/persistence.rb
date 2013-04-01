@@ -12,7 +12,7 @@ module Paranoid2
 
     def delete(opts = {})
       with_paranoid(opts) do
-        update_attribute(:deleted_at, Time.now) if !deleted? && persisted?
+        touch(:deleted_at) if !deleted? && persisted?
         if paranoid_force
           self.class.unscoped { super() }
         else
@@ -24,7 +24,19 @@ module Paranoid2
     def restore(opts={})
       return if !destroyed?
 
-      update_attribute :deleted_at, nil
+      attrs = timestamp_attributes_for_update_in_model
+      current_time = current_time_from_proper_timezone
+      changes = {}
+      attrs.each do |column|
+        changes[column.to_s] = write_attribute(column.to_s, current_time)
+      end
+      changes['deleted_at'] = write_attribute('deleted_at', nil)
+
+      changes[self.class.locking_column] = increment_lock if locking_enabled?
+
+      @changed_attributes.except!(*changes.keys)
+      primary_key = self.class.primary_key
+      self.class.unscoped.where({ primary_key => self[primary_key] }).update_all(changes)
 
       if opts.fetch(:associations) { true }
         restore_associations
