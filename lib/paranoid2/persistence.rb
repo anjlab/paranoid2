@@ -13,11 +13,7 @@ module Paranoid2
     def delete(opts = {})
       with_paranoid(opts) do
         touch(:deleted_at) if !deleted? && persisted?
-        if paranoid_force
-          self.class.unscoped { super() }
-        else
-          freeze
-        end
+        self.class.unscoped { super() } if paranoid_force
       end
     end
 
