@@ -46,6 +46,20 @@ module Paranoid2
     def paranoid_force
       Thread.current['paranoid_force']
     end
+
+    def has_paranoid model_name, opts={}
+      class_name = model_name.to_s.camelize
+      klass      = eval class_name
+
+      return if not klass.paranoid?
+
+      field_name = opts[:foreign_key] || "#{model_name}_id"
+
+      send :define_method, model_name do
+        field_value = read_attribute field_name
+        klass.with_deleted.where(id: field_value).first
+      end
+    end
   end
 end
 

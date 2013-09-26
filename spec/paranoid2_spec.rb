@@ -219,4 +219,28 @@ describe Paranoid2 do
       scope.where_values_hash['name'].must_equal 'foo'
     end
   end
+
+  describe Employee do
+    let(:model) { Employee }
+
+    before { model.unscoped.destroy_all! }
+
+    it '#has_paranoid' do
+      employer = Employer.create
+      employee = Employee.create
+
+      job = Job.create employer: employer, employee: employee
+
+      job.employee.wont_be :nil?
+      job.employer.wont_be :nil?
+
+      employee.destroy
+      employer.destroy
+
+      job.reload
+
+      job.employee.wont_be :nil?
+      job.employer.must_be :nil?
+    end
+  end
 end

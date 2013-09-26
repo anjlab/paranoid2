@@ -55,4 +55,6 @@ class Job < ActiveRecord::Base
 
   belongs_to :employer
   belongs_to :employee
+
+  has_paranoid :employee
 end
