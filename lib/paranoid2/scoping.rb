@@ -19,6 +19,6 @@ module Paranoid2
       def with_deleted
         all.tap { |s| s.default_scoped = false }
       end
-    end    
+    end
   end
 end

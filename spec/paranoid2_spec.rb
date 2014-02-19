@@ -117,10 +117,22 @@ describe Paranoid2 do
       b.destroy
       parent1.paranoid_models.count.must_equal 0
       parent1.paranoid_models.only_deleted.count.must_equal 1
-    
+
       c = model.create(parent_model: parent1)
       parent1.paranoid_models.with_deleted.count.must_equal 2
       parent1.paranoid_models.with_deleted.must_equal [a, c]
+    end
+
+    it 'allows "Model#includes"' do
+      parent1 = ParentModel.create
+      parent2 = ParentModel.create
+      a = model.create(parent_model: parent1)
+      b = model.create(parent_model: parent2)
+
+      l = ActiveRecord::Base.logger
+      ActiveRecord::Base.logger = Logger.new(STDOUT)
+      res = model.includes(:parent_model).merge(ParentModel.with_deleted).references(:parent_model).to_a
+      ActiveRecord::Base.logger = l
     end
 
     it 'works with has_many_through relationships' do
@@ -170,7 +182,7 @@ describe Paranoid2 do
       a.reload
 
       parent.wont_be :destroyed?
-      a.wont_be :destroyed?            
+      a.wont_be :destroyed?
     end
 
     it 'restores belongs_to associations' do
@@ -197,7 +209,7 @@ describe Paranoid2 do
     it 'delete without callback' do
       object.save
       object.delete
-      
+
       object.callback_called.must_be_nil
     end
 
@@ -217,6 +229,14 @@ describe Paranoid2 do
     it 'chains paranoid models' do
       scope = model.where(name: 'foo').only_deleted
       scope.where_values_hash['name'].must_equal 'foo'
+    end
+
+    it 'validates uniqueness with scope' do
+      a = model.create!(name: 'yury', phone: '9106701550')
+      b = model.create(name: 'bla', phone: '9106701550')
+      b.wont_be :valid?
+      a.destroy
+      b.must_be :valid?
     end
   end
 end

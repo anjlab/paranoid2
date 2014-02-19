@@ -15,6 +15,9 @@ class FeaturefulModel < ActiveRecord::Base
   paranoid
 
   validates :name, presence: true, uniqueness: true
+  validates :phone, uniqueness: {conditions: -> { paranoid_scope } }
+
+  scope :find_last, lambda {|name| where(name: name).last }
 end
 
 class CallbackModel < ActiveRecord::Base
