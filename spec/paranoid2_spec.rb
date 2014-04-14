@@ -116,6 +116,7 @@ describe Paranoid2 do
       a.destroy
       b.destroy
       parent1.paranoid_models.count.must_equal 0
+      puts parent1.paranoid_models.only_deleted.inspect
       parent1.paranoid_models.only_deleted.count.must_equal 1
 
       c = model.create(parent_model: parent1)
