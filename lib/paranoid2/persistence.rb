@@ -41,6 +41,7 @@ module Paranoid2
 
     def restore_associations
       self.class.reflect_on_all_associations.each do |a|
+        next if a.polymorphic?
         next unless a.klass.paranoid?
 
         if a.collection?
