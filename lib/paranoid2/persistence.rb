@@ -41,12 +41,14 @@ module Paranoid2
 
     def restore_associations
       self.class.reflect_on_all_associations.each do |a|
-        next unless a.klass.paranoid?
+        #when this is a polymorphic association you can't use a.klass or you get an undefined constant
+        const = a.polymorphic? ? send(a.foreign_type).constantize : a.klass
 
+        next unless const.paranoid?
         if a.collection?
           send(a.name).restore_all
         else
-          a.klass.unscoped { send(a.name).try(:restore) }
+          const.unscoped { send(a.name).try(:restore) }
         end
       end
     end
